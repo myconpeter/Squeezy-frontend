@@ -3,6 +3,7 @@ import { DM_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/context/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
+import QueryProvider from '@/context/query-provider';
 
 const dm_sans = DM_Sans({ subsets: ['latin'] });
 
@@ -20,15 +21,26 @@ export default function RootLayout({
 		<html
 			lang='en'
 			suppressHydrationWarning>
-			<body className={`antialiased bg-background ${dm_sans.className}`}>
-				<ThemeProvider
-					attribute='class'
-					defaultTheme='light'
-					enableSystem={false}
-					disableTransitionOnChange>
-					{children}
-					<Toaster />
-				</ThemeProvider>{' '}
+			<body className={`antialiased bg-background ${dm_sans.className} `}>
+				<QueryProvider>
+					<ThemeProvider
+						attribute='class'
+						defaultTheme='light'
+						enableSystem={false}
+						disableTransitionOnChange>
+						{children}
+						<Toaster
+							position='top-right'
+							toastOptions={{
+								classNames: {
+									error: 'bg-red-600 text-white',
+									success: 'bg-green-600 text-white',
+									warning: 'bg-yellow-500 text-black',
+								},
+							}}
+						/>
+					</ThemeProvider>{' '}
+				</QueryProvider>
 			</body>
 		</html>
 	);

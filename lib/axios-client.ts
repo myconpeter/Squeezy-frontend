@@ -2,7 +2,7 @@ import axios from 'axios';
 import { error } from 'console';
 
 const options = {
-	baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+	baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 	withCredentials: true,
 	timeout: 10000,
 };
@@ -21,5 +21,9 @@ API.interceptors.response.use(
 				...data,
 			});
 		}
+
+		return Promise.reject(error);
 	}
 );
+
+export default API;

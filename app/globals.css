@@ -114,6 +114,10 @@
 	--sidebar-ring: oklch(0.488 0.243 264.376);
 }
 
+html,
+body {
+	height: 100%;
+}
 /* it ends here */
 
 @layer base {
