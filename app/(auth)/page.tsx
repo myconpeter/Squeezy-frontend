@@ -1,7 +1,7 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader } from 'lucide-react';
 import { z } from 'zod';
 import Link from 'next/link';
 import {
@@ -15,14 +15,23 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/logo';
+import { loginMutation } from '@/lib/api';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function Login() {
+	const { mutate, isPending } = useMutation({
+		mutationFn: loginMutation,
+	});
+
+	const router = useRouter();
 	const formSchema = z.object({
 		email: z.string().trim().email().min(1, {
 			message: 'Email is required',
 		}),
-		password: z.string().trim().min(1, {
-			message: 'Password is required',
+		password: z.string().trim().min(6, {
+			message: 'Minimum length is six',
 		}),
 	});
 
@@ -34,7 +43,24 @@ export default function Login() {
 		},
 	});
 
-	const onSubmit = (values: z.infer<typeof formSchema>) => {};
+	const onSubmit = (values: z.infer<typeof formSchema>) => {
+		mutate(values, {
+			onSuccess: (response) => {
+				if (response.data.mfaRequired) {
+					router.replace(`/verify-mfa?email=${values.email}`);
+				}
+				router.replace('/home');
+			},
+			onError: (error: any) => {
+				console.log(error);
+				const message =
+					error?.response?.data?.message || error.message || 'Something went wrong';
+				toast.error('Error', {
+					description: message,
+				});
+			},
+		});
+	};
 
 	return (
 		<main className='w-full min-h-[590px] h-auto max-w-full pt-10'>
@@ -98,13 +124,15 @@ export default function Login() {
 						<div className='mb-4 flex w-full items-center justify-end'>
 							<Link
 								className='text-sm dark:text-white'
-								href='/reset-password?email='>
+								href={`/forget-password?email=${form.getValues().email}`}>
 								Forgot your password?
 							</Link>
 						</div>
 						<Button
 							className='w-full text-[15px] h-[40px] text-white font-semibold'
-							type='submit'>
+							type='submit'
+							disabled={isPending}>
+							{isPending && <Loader className='animate-spin' />}
 							Sign in
 							<ArrowRight />
 						</Button>

@@ -1,10 +1,14 @@
 import React, { Suspense } from 'react';
-import ForgotPassword from './_forget-password';
+import ComfirmAccount from './_confirm-account';
 
 type Props = {};
 
 const page = (props: Props) => {
-	return <Suspense>{<ForgotPassword />}</Suspense>;
+	return (
+		<Suspense>
+			<ComfirmAccount />
+		</Suspense>
+	);
 };
 
 export default page;
