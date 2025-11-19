@@ -1,9 +1,9 @@
-"use client";
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import Link from "next/link";
+'use client';
+import { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import Link from 'next/link';
 import {
   Form,
   FormControl,
@@ -11,66 +11,71 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Loader, MailCheckIcon } from "lucide-react";
-import Logo from "@/components/logo";
-import { useMutation } from "@tanstack/react-query";
-import { registerMutationFn } from "@/lib/api";
-import { toast } from "@/hooks/use-toast";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Loader, MailCheckIcon } from 'lucide-react';
+import Logo from '@/components/logo';
+import { registerMutationFn } from '@/lib/api';
+import { toast } from '@/hooks/use-toast';
+import { useSignupMutation } from '@/lib/api/authEndpoint';
 
 export default function SignUp() {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: registerMutationFn,
-  });
+  const [signup, { isLoading }] = useSignupMutation();
 
   const formSchema = z
     .object({
       name: z.string().trim().min(1, {
-        message: "Name is required",
+        message: 'Name is required',
       }),
       email: z.string().trim().email().min(1, {
-        message: "Email is required",
+        message: 'Email is required',
       }),
       password: z.string().trim().min(1, {
-        message: "Password is required",
+        message: 'Password is required',
       }),
       confirmPassword: z.string().min(1, {
-        message: "Confirm Password is required",
+        message: 'Confirm Password is required',
       }),
     })
-    .refine((val) => val.password === val.confirmPassword, {
-      message: "Password does not match",
-      path: ["confirmPassword"],
+    .refine(val => val.password === val.confirmPassword, {
+      message: 'Password does not match',
+      path: ['confirmPassword'],
     });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    mutate(values, {
-      onSuccess: () => {
-        setIsSubmitted(true);
-      },
-      onError: (error) => {
-        console.log(error);
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-        });
-      },
-    });
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      // Call the mutation
+      const result = await signup(values).unwrap();
+
+      // Handle success
+      toast({
+        title: 'Success!',
+        description: result.message || 'Account created successfully',
+      });
+
+      // Redirect to login or dashboard
+      setIsSubmitted(true);
+    } catch (error: any) {
+      // Handle error
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: error?.data?.message || 'Failed to create account',
+      });
+    }
   };
 
   return (
@@ -84,7 +89,7 @@ export default function SignUp() {
               Create a Squeezy account
             </h1>
             <p className="mb-6 text-center sm:text-left text-base dark:text-[#f1f7feb5] font-normal">
-              Already have an account?{" "}
+              Already have an account?{' '}
               <Link className="text-primary" href="/">
                 Sign in
               </Link>
@@ -98,7 +103,9 @@ export default function SignUp() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="dark:text-[#f1f7feb5] text-sm">Name</FormLabel>
+                        <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                          Name
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Techwithemma" {...field} />
                         </FormControl>
@@ -113,7 +120,9 @@ export default function SignUp() {
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="dark:text-[#f1f7feb5] text-sm">Email</FormLabel>
+                        <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                          Email
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="subscribeto@channel.com"
@@ -132,9 +141,15 @@ export default function SignUp() {
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="dark:text-[#f1f7feb5] text-sm">Password</FormLabel>
+                        <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                          Password
+                        </FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••••••" {...field} />
+                          <Input
+                            type="password"
+                            placeholder="••••••••••••"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -152,7 +167,11 @@ export default function SignUp() {
                           Confirm Password
                         </FormLabel>
                         <FormControl>
-                          <Input type="password" placeholder="••••••••••••" {...field} />
+                          <Input
+                            type="password"
+                            placeholder="••••••••••••"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -161,11 +180,11 @@ export default function SignUp() {
                 </div>
                 <Button
                   className="w-full text-[15px] h-[40px] !bg-blue-500 text-white font-semibold"
-                  disabled={isPending}
+                  disabled={isLoading}
                   type="submit"
                 >
-                  {isPending && <Loader className="animate-spin" />}
-                  Create account
+                  {isLoading && <Loader className="animate-spin" />}
+                  Create accountt
                   <ArrowRight />
                 </Button>
 
@@ -176,7 +195,9 @@ export default function SignUp() {
                     data-orientation="horizontal"
                     role="separator"
                   ></div>
-                  <span className="mx-4 text-xs dark:text-[#f1f7feb5] font-normal">OR</span>
+                  <span className="mx-4 text-xs dark:text-[#f1f7feb5] font-normal">
+                    OR
+                  </span>
                   <div
                     aria-hidden="true"
                     className="h-px w-full bg-[#eee] dark:bg-[#d6ebfd30]"
@@ -192,11 +213,11 @@ export default function SignUp() {
               </Button>
             </a>
             <p className="text-xs font-normal mt-4">
-              By signing up, you agree to our{" "}
+              By signing up, you agree to our{' '}
               <a className="text-primary hover:underline" href="#">
                 Terms of Service
-              </a>{" "}
-              and{" "}
+              </a>{' '}
+              and{' '}
               <a className="text-primary hover:underline" href="#">
                 Privacy Policy
               </a>
