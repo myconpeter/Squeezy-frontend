@@ -1,10 +1,10 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { ArrowRight, Loader } from "lucide-react";
-import { useMutation } from "@tanstack/react-query";
-import { z } from "zod";
-import Link from "next/link";
+'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { ArrowRight, Loader } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { z } from 'zod';
+import Link from 'next/link';
 import {
   Form,
   FormControl,
@@ -12,13 +12,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import Logo from "@/components/logo";
-import { loginMutationFn } from "@/lib/api";
-import { useRouter } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import Logo from '@/components/logo';
+import { loginMutationFn } from '@/lib/api';
+import { useRouter } from 'next/navigation';
+import { toast } from '@/hooks/use-toast';
 
 export default function Login() {
   const router = useRouter();
@@ -28,35 +28,35 @@ export default function Login() {
 
   const formSchema = z.object({
     email: z.string().trim().email().min(1, {
-      message: "Email is required",
+      message: 'Email is required',
     }),
     password: z.string().trim().min(1, {
-      message: "Password is required",
+      message: 'Password is required',
     }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     mutate(values, {
-      onSuccess: (response) => {
+      onSuccess: response => {
         if (response.data.mfaRequired) {
           router.replace(`/verify-mfa?email=${values.email}`);
           return;
         }
         router.replace(`/home`);
       },
-      onError: (error) => {
+      onError: error => {
         toast({
-          title: "Error",
+          title: 'Error',
           description: error.message,
-          variant: "destructive",
+          variant: 'destructive',
         });
       },
     });
@@ -71,7 +71,7 @@ export default function Login() {
           Log in to Squeezy
         </h1>
         <p className="mb-8 text-center sm:text-left text-base dark:text-[#f1f7feb5] font-normal">
-          Don't have an account?{" "}
+          Don't have an account?{' '}
           <Link className="text-primary" href="/signup">
             Sign up
           </Link>
@@ -85,7 +85,9 @@ export default function Login() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">Email</FormLabel>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                      Email
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="subscribeto@channel.com" {...field} />
                     </FormControl>
@@ -100,7 +102,9 @@ export default function Login() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">Password</FormLabel>
+                    <FormLabel className="dark:text-[#f1f7feb5] text-sm">
+                      Password
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="••••••••••••" {...field} />
                     </FormControl>
@@ -134,7 +138,9 @@ export default function Login() {
                 data-orientation="horizontal"
                 role="separator"
               ></div>
-              <span className="mx-4 text-xs dark:text-[#f1f7feb5] font-normal">OR</span>
+              <span className="mx-4 text-xs dark:text-[#f1f7feb5] font-normal">
+                OR
+              </span>
               <div
                 aria-hidden="true"
                 className="h-px w-full bg-[#eee] dark:bg-[#d6ebfd30]"
@@ -146,16 +152,16 @@ export default function Login() {
         </Form>
         <a href="http://localhost:5000/api/v1/auth/google">
           <Button variant="outline" className="w-full h-[40px]">
-            Log In With Google
+            Log In With Googlee
           </Button>
         </a>
 
         <p className="text-xs dark:text-slate- font-normal mt-7">
-          By signing in, you agree to our{" "}
+          By signing in, you agree to our{' '}
           <a className="text-primary hover:underline" href="#">
             Terms of Service
-          </a>{" "}
-          and{" "}
+          </a>{' '}
+          and{' '}
           <a className="text-primary hover:underline" href="#">
             Privacy Policy
           </a>
