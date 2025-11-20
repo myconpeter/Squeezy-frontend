@@ -50,7 +50,7 @@ export default function Login() {
           router.replace(`/verify-mfa?email=${values.email}`);
           return;
         }
-        router.replace(`/home`);
+        router.push('/home');
       },
       onError: error => {
         toast({
