@@ -150,9 +150,9 @@ export default function Login() {
             </div>
           </form>
         </Form>
-        <a href="http://localhost:5000/api/v1/auth/google">
+        <a href="https://auth-backend-api-production.up.railway.app/api/v1/auth/google">
           <Button variant="outline" className="w-full h-[40px]">
-            Log In With Googlee
+            Log In With Google
           </Button>
         </a>
 
