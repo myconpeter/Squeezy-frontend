@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -6,13 +6,13 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { toast } from "@/hooks/use-toast";
-import { logoutMutationFn } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
-import { useRouter } from "next/navigation";
-import React, { useCallback } from "react";
+} from '@/components/ui/dialog';
+import { toast } from '@/hooks/use-toast';
+import { logoutMutationFn } from '@/lib/api';
+import { useMutation } from '@tanstack/react-query';
+import { Loader } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useCallback } from 'react';
 
 const LogoutDialog = (props: {
   isOpen: boolean;
@@ -24,13 +24,13 @@ const LogoutDialog = (props: {
   const { mutate, isPending } = useMutation({
     mutationFn: logoutMutationFn,
     onSuccess: () => {
-      router.replace("/");
+      router.replace('/');
     },
-    onError: (error) => {
+    onError: error => {
       toast({
-        title: "Error",
+        title: 'Error',
         description: error.message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     },
   });
@@ -46,7 +46,7 @@ const LogoutDialog = (props: {
             <DialogTitle>Are you sure you want to log out?</DialogTitle>
             <DialogDescription>
               This will end your current session and you will need to log in
-              again to access your account.
+              again. Thanks.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
